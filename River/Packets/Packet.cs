@@ -17,11 +17,12 @@ public class Packet {
         }
     }
 
-    public bool Has(string key) =>
+    private bool Has(string key) =>
         _map.ContainsKey(key)
         && (_map[key].ValueKind switch {
             JsonValueKind.Null => false,
             JsonValueKind.String when _map[key].GetString() == string.Empty => false,
+            JsonValueKind.Array when _map[key].GetArrayLength() == 0 => false,
             _ => true
         });
 
