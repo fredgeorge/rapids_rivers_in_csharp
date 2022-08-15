@@ -11,4 +11,8 @@ public class Packet {
     public object this[string key] {
         get { return _map[key]; }
     }
+
+    public bool IsMissing(string key) {
+        return !_map.ContainsKey(key) || _map[key].Equals("");
+    }
 }
