@@ -41,6 +41,11 @@ public class Packet {
         return Element(key, JsonValueKind.Number).GetDouble();
     }
 
+    public DateTime DateTime(string key) {
+        if (IsDateTime(key, out var parsedValue)) return parsedValue;
+        throw new ArgumentException("Value of <{key}> is of type {_map[key].ValueKind} rather than expected type of DateTime", nameof(key));
+    }
+
     public bool Boolean(string key) {
         if (Has(key, JsonValueKind.True)) return true;
         if (Has(key, JsonValueKind.False)) return false;
@@ -63,5 +68,10 @@ public class Packet {
         parsedValue = false;
         return Has(key, JsonValueKind.String) &&
                bool.TryParse(_map[key].GetString(), out parsedValue);
+    }
+
+    private bool IsDateTime(string key, out DateTime parsedValue) {
+        parsedValue = default;
+        return Has(key, JsonValueKind.String) && this._map[key].TryGetDateTime(out parsedValue);
     }
 }

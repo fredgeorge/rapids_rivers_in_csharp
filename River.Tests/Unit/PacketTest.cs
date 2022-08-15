@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using River.Packets;
+using River.Tests.Util;
 using Xunit;
 
 namespace River.Tests.Unit;
@@ -13,7 +14,7 @@ public class PacketTest {
         ""empty_string"":"""",
         ""boolean_key"": true,
         ""boolean_string_key"": ""false"",
-        ""date_time_key"": ""2022-03-03T06:06:06Z"",
+        ""date_time_key"": ""2022-03-03T00:00:00Z"",
         ""string_list_key"":[""foo"",""bar""],
         ""integer_list_key"":[2,4],
         ""empty_list_key"":[]
@@ -28,6 +29,7 @@ public class PacketTest {
         Assert.Equal(7.5, _packet.Double("double_key"));
         Assert.True(_packet.Boolean("boolean_key"));
         Assert.False(_packet.Boolean("boolean_string_key"));
+        Assert.Equal(3.Mar(), _packet.DateTime("date_time_key"));
     }
 
     // [Fact]
