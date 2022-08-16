@@ -39,4 +39,10 @@ public class PacketTest {
         Assert.True(_packet.IsMissing("null_key"));
         Assert.True(_packet.IsMissing("empty_list_key"));
     }
+
+    [Fact]
+    public void InvalidJson() {
+        Assert.Throws<PacketException>(() => new Packet(""));
+        Assert.Throws<PacketException>(() => new Packet("{"));
+    }
 }

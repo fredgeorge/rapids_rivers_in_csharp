@@ -8,12 +8,12 @@ public class Packet {
 
     public Packet(string jsonString) {
         if (string.IsNullOrEmpty(jsonString))
-            throw new ArgumentException("JSON string cannot be null or empty", nameof(jsonString));
+            throw new PacketException("JSON string cannot be null or empty", nameof(jsonString));
         try {
             _map = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(jsonString)
-                                ?? throw new ArgumentException("JSON string could not be deserialized", nameof(jsonString));
+                                ?? throw new PacketException("JSON string could not be deserialized", nameof(jsonString));
         } catch (Exception ex) {
-            throw new ArgumentException("JSON string could not be deserialized", nameof(jsonString), ex);
+            throw new PacketException("JSON string could not be deserialized", nameof(jsonString), ex);
         }
     }
 
@@ -31,7 +31,7 @@ public class Packet {
     }
 
     public string String(string key) {
-        return Element(key, JsonValueKind.String).GetString();
+        return Element(key, JsonValueKind.String).GetString()!;
     }
 
     public int Integer(string key) {
@@ -44,20 +44,20 @@ public class Packet {
 
     public DateTime DateTime(string key) {
         if (IsDateTime(key, out var parsedValue)) return parsedValue;
-        throw new ArgumentException("Value of <{key}> is of type {_map[key].ValueKind} rather than expected type of DateTime", nameof(key));
+        throw new PacketException("Value of <{key}> is of type {_map[key].ValueKind} rather than expected type of DateTime", nameof(key));
     }
 
     public bool Boolean(string key) {
         if (Has(key, JsonValueKind.True)) return true;
         if (Has(key, JsonValueKind.False)) return false;
         if (IsBool(key, out var parsedValue)) return parsedValue;
-        throw new ArgumentException($"Value of <{key}> is of type {_map[key].ValueKind} rather than expected type of Boolean");
+        throw new PacketException($"Value of <{key}> is of type {_map[key].ValueKind} rather than expected type of Boolean");
     }
 
     private JsonElement Element(string key, JsonValueKind kind) {
-        if (IsMissing(key)) throw new ArgumentException($"Key <{key}> does not exist", nameof(key));
+        if (IsMissing(key)) throw new PacketException($"Key <{key}> does not exist", nameof(key));
         if (_map[key].ValueKind != kind)
-            throw new ArgumentException($"Value of <{key}> is of type {_map[key].ValueKind} rather than expected type of {kind}", nameof(key));
+            throw new PacketException($"Value of <{key}> is of type {_map[key].ValueKind} rather than expected type of {kind}", nameof(key));
         return _map[key];
     }
 
@@ -75,4 +75,12 @@ public class Packet {
         parsedValue = default;
         return Has(key, JsonValueKind.String) && this._map[key].TryGetDateTime(out parsedValue);
     }
+}
+
+public class PacketException : ArgumentException {
+    public PacketException(string message, string? paramName = null) 
+        : base(message, paramName) { }
+    public PacketException(string? message, string? paramName, Exception? innerException) 
+        : base(message, paramName, innerException) { }
+    
 }
