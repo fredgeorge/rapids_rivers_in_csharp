@@ -35,4 +35,11 @@ public class ValidationTest {
             new RequireKeys("string_key", "foo")
         )));
     }
+
+    [Fact]
+    public void ForbiddenKeys() {
+        Assert.True(_packet.DoesPass(new Rules( new ForbidKeys("foo") )));
+        Assert.False(_packet.DoesPass(new Rules( new ForbidKeys("string_key", "foo") )));
+        Assert.True(_packet.DoesPass(new Rules( new ForbidKeys("null_key", "empty_string", "empty_list_key") )));
+    }
 }
