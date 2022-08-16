@@ -1,11 +1,17 @@
+/*
+ * Copyright (c) 2022 by Fred George
+ * @author Fred George  fredgeorge@acm.org
+ * Licensed under the MIT License; see LICENSE file in root.
+ */
+
 using System;
 using System.Collections.Generic;
 using RapidsRivers.Packets;
 using RapidsRivers.Rapids;
 
-namespace River.Tests.Util; 
+namespace RapidsRivers.Tests.Util; 
 
-public class TestConnection: RapidsConnection {
+internal class TestConnection: RapidsConnection {
     private readonly List<RapidsConnection.MessageListener> _rivers = new();
     private readonly List<string> _sentMessages = new();
     
