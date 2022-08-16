@@ -1,4 +1,5 @@
 using System.Text.Json;
+using River.Validation;
 
 namespace River.Packets; 
 
@@ -17,7 +18,7 @@ public class Packet {
         }
     }
 
-    private bool Has(string key) =>
+    public bool Has(string key) =>
         _map.ContainsKey(key)
         && (_map[key].ValueKind switch {
             JsonValueKind.Null => false,
@@ -78,6 +79,10 @@ public class Packet {
     private bool IsDateTime(string key, out DateTime parsedValue) {
         parsedValue = default;
         return Has(key, JsonValueKind.String) && this._map[key].TryGetDateTime(out parsedValue);
+    }
+
+    public bool DoesPass(Rules rules) {
+        return rules.All((rule) => rule.IsValid(this));
     }
 }
 

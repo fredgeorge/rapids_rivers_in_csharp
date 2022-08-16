@@ -58,6 +58,7 @@ public class PacketTest {
         Assert.Throws<PacketException>(() => _packet.Integer("double_key"));
         Assert.Throws<PacketException>(() => _packet.Double("string_key"));
         Assert.Throws<PacketException>(() => _packet.DateTime("string_key"));
+        Assert.Throws<PacketException>(() => _packet["string_key"]);
     }
 
     [Fact]
