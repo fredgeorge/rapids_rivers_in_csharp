@@ -43,13 +43,25 @@ public class ValidationTest {
 
     [Fact]
     public void ForbiddenKeys() {
-        Assert.True(_packet.DoesPass(new Rules( new ForbidKeys("foo") )));
-        Assert.False(_packet.DoesPass(new Rules( new ForbidKeys("string_key", "foo") )));
-        Assert.True(_packet.DoesPass(new Rules( new ForbidKeys("null_key", "empty_string", "empty_list_key") )));
+        Assert.True(_packet.DoesPass(new Rules(new ForbidKeys("foo"))));
+        Assert.False(_packet.DoesPass(new Rules(new ForbidKeys("string_key", "foo"))));
+        Assert.True(_packet.DoesPass(new Rules(new ForbidKeys("null_key", "empty_string", "empty_list_key"))));
     }
 
     [Fact]
-    public void RequireSpecificValue() {
-        Assert.True(_packet.DoesPass(new Rules( new RequireValue("string_key", "rental_offer_engine") )));
+    public void RequireSpecificString() {
+        Assert.True(_packet.DoesPass(new Rules(new RequireValue("string_key", "rental_offer_engine"))));
+        Assert.False(_packet.DoesPass(new Rules(new RequireValue("string_key", "foo"))));
+        Assert.False(_packet.DoesPass(new Rules(new RequireValue("bar", "foo"))));
+    }
+
+    [Fact]
+    public void RequireSpecificNumber() {
+        Assert.True(_packet.DoesPass(new Rules(new RequireValue("integer_key", 7))));
+        Assert.True(_packet.DoesPass(new Rules(new RequireValue("integer_key", 7.0))));
+        Assert.False(_packet.DoesPass(new Rules(new RequireValue("integer_key", 8))));
+        Assert.True(_packet.DoesPass(new Rules(new RequireValue("double_key", 7.5))));
+        Assert.False(_packet.DoesPass(new Rules(new RequireValue("double_key", 8))));
+        Assert.False(_packet.DoesPass(new Rules(new RequireValue("integer_key", "foo"))));
     }
 }
