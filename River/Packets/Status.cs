@@ -4,6 +4,8 @@
  * Licensed under the MIT License; see LICENSE file in root.
  */
 
+using System.Text;
+
 namespace River.Packets;
 
 public class Status {
@@ -36,5 +38,27 @@ public class Status {
 
     public void MissingValue(string key, object requiredValue) {
         _errorMessages.Add($"Required key of <{key}> is missing required value of <{requiredValue}>");
+    }
+
+    public override string ToString() {
+        var result = new StringBuilder("Status of Evaluation:\n");
+        result.Append("\tError messages: ");
+        AppendTo(result, _errorMessages);
+        result.Append("\tInformational messages: ");
+        AppendTo(result, _informationalMessages);
+        return result.ToString();
+    }
+
+    private void AppendTo(StringBuilder builder, List<string> messages) {
+        if (messages.Count == 0) {
+            builder.Append("None\n");
+            return;
+        }
+        builder.Append('\n');
+        messages.ForEach((message) => {
+            builder.Append("\t\t");
+            builder.Append(message);
+            builder.Append('\n');
+        });
     }
 }

@@ -74,6 +74,7 @@ public class ValidationTest {
         AssertFails(new Rules(new RequireValue("boolean_key", false)));
         AssertFails(new Rules(new RequireValue("boolean_string_key", "true")));
         AssertPasses(new Rules(new RequireValue("boolean_string_key", "false")));
+        AssertFails(new Rules(new RequireValue("boolean_string_key", false))); // Must use quoted string
         AssertFails(new Rules(new RequireValue("boolean_key", "foo")));
     }
 
@@ -88,10 +89,12 @@ public class ValidationTest {
     }
 
     private void AssertPasses(Rules rules) {
-        Assert.False(_packet.Evaluate(rules).HasErrors());
+        var result = _packet.Evaluate(rules);
+        Assert.False(result.HasErrors(), result.ToString());
     }
 
     private void AssertFails(Rules rules) {
-        Assert.True(_packet.Evaluate(rules).HasErrors());
+        var result = _packet.Evaluate(rules);
+        Assert.True(result.HasErrors(), result.ToString());
     }
 }
