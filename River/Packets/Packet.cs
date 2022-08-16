@@ -35,7 +35,9 @@ public class Packet {
     }
 
     public int Integer(string key) {
-        return Element(key, JsonValueKind.Number).GetInt32();
+        var value = Double(key);
+        if (value % 1 != 0) throw new PacketException($"Value of <{key}> is a double, not an integer");
+        return (int)value;
     }
 
     public double Double(string key) {
