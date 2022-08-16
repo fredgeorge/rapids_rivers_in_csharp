@@ -1,10 +1,16 @@
-using System.Security;
+/*
+ * Copyright (c) 2022 by Fred George
+ * @author Fred George  fredgeorge@acm.org
+ * Licensed under the MIT License; see LICENSE file in root.
+ */
+
 using River.Packets;
 using River.Validation;
 using Xunit;
 
 namespace River.Tests.Unit;
 
+// Ensures Rules execute properly
 public class ValidationTest {
     private const string Original = @"{
         ""string_key"":""rental_offer_engine"",

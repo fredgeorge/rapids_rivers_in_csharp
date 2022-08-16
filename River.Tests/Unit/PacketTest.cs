@@ -1,4 +1,9 @@
-using System.Collections.Generic;
+/*
+ * Copyright (c) 2022 by Fred George
+ * @author Fred George  fredgeorge@acm.org
+ * Licensed under the MIT License; see LICENSE file in root.
+ */
+
 using River.Packets;
 using River.Tests.Util;
 using Xunit;
