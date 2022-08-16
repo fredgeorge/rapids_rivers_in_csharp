@@ -4,11 +4,12 @@
  * Licensed under the MIT License; see LICENSE file in root.
  */
 
-using River.Packets;
 using River.Validation;
+using RapidsRivers.Packets;
+using RapidsRivers.Validation;
 using Xunit;
 
-namespace River.Tests.Unit;
+namespace RapidsRivers.Tests.Unit;
 
 // Ensures Rules execute properly
 public class ValidationTest {

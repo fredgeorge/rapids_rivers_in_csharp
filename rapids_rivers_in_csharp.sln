@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "River", "River\River.csproj", "{EE843CB8-737C-455C-9CD1-7670961CFA4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidsRivers", "RapidsRivers\RapidsRivers.csproj", "{EE843CB8-737C-455C-9CD1-7670961CFA4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "River.Tests", "River.Tests\River.Tests.csproj", "{1BB71D73-55B3-4AD1-86C7-D49A4C405B21}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidsRivers.Tests", "RapidsRivers.Tests\RapidsRivers.Tests.csproj", "{1BB71D73-55B3-4AD1-86C7-D49A4C405B21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

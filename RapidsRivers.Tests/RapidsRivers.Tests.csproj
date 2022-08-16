@@ -5,6 +5,8 @@
         <Nullable>enable</Nullable>
 
         <IsPackable>false</IsPackable>
+
+        <RootNamespace>RapidsRivers.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\River\River.csproj" />
+        <ProjectReference Include="..\RapidsRivers\RapidsRivers.csproj" />
     </ItemGroup>
 
 </Project>

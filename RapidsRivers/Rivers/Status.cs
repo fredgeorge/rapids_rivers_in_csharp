@@ -6,7 +6,7 @@
 
 using System.Text;
 
-namespace River.Packets;
+namespace RapidsRivers.Rivers;
 
 public class Status {
     private readonly List<string> _informationalMessages = new();

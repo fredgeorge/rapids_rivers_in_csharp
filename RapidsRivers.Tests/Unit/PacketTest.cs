@@ -4,11 +4,11 @@
  * Licensed under the MIT License; see LICENSE file in root.
  */
 
-using River.Packets;
+using RapidsRivers.Packets;
 using River.Tests.Util;
 using Xunit;
 
-namespace River.Tests.Unit;
+namespace RiverEngine.Tests.Unit;
 
 public class PacketTest {
     private const string Original = @"{

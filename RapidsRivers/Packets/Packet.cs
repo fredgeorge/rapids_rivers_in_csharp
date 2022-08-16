@@ -5,9 +5,11 @@
  */
 
 using System.Text.Json;
+using RapidsRivers.Rivers;
 using River.Validation;
+using RapidsRivers.Validation;
 
-namespace River.Packets; 
+namespace RapidsRivers.Packets; 
 
 // Understands a specific message on an Event Bus
 public class Packet {

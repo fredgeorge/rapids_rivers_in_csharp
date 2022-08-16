@@ -4,9 +4,10 @@
  * Licensed under the MIT License; see LICENSE file in root.
  */
 
-using River.Packets;
+using RapidsRivers.Packets;
+using RapidsRivers.Rivers;
 
-namespace River.Validation; 
+namespace RapidsRivers.Validation; 
 
 // Understands a particular criteria a Packet must meet
 public interface Rule {

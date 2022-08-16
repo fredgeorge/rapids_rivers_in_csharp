@@ -5,9 +5,11 @@
  */
 
 using System.Text.Json;
-using River.Packets;
+using River.Validation;
+using RapidsRivers.Packets;
+using RapidsRivers.Rivers;
 
-namespace River.Validation;
+namespace RapidsRivers.Validation;
 
 public class RequireValue : RuleGenerator {
     private readonly Rule _rule;

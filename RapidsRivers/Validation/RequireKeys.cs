@@ -4,9 +4,11 @@
  * Licensed under the MIT License; see LICENSE file in root.
  */
 
-using River.Packets;
+using River.Validation;
+using RapidsRivers.Packets;
+using RapidsRivers.Rivers;
 
-namespace River.Validation;
+namespace RapidsRivers.Validation;
 
 public class RequireKeys : RuleGenerator {
     private readonly IList<string> _keys;

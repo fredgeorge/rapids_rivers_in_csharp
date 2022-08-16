@@ -5,8 +5,9 @@
  */
 
 using System.Collections;
+using River.Validation;
 
-namespace River.Validation; 
+namespace RapidsRivers.Validation; 
 
 // Understands filtering criteria for Packet
 public class Rules : IEnumerable<Rule> {
