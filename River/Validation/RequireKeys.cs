@@ -25,8 +25,13 @@ public class RequireKeys : RuleGenerator {
             _key = key;
         }
 
-        public bool IsValid(Packet packet) {
-            return packet.Has(_key);
+        public void Evaluate(Packet packet, Status status) {
+            if (packet.IsMissing(_key)) status.UnexpectedlyMissing(_key);
+            else status.FoundExpected(_key);
+        }
+
+        public override string ToString() {
+            return $"Require key <{_key}>";
         }
     }
 }

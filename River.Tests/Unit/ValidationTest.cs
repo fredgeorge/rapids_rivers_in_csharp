@@ -34,56 +34,64 @@ public class ValidationTest {
 
     [Fact]
     public void NoRules() {
-        Assert.True(_packet.DoesPass(new Rules()));
+        AssertPasses(new Rules());
     }
 
     [Fact]
     public void RequiredKeys() {
-        Assert.True(_packet.DoesPass(new Rules( new RequireKeys("string_key", "integer_key") )));
-        Assert.False(_packet.DoesPass(new Rules( new RequireKeys("string_key", "foo") )));
-        Assert.True(_packet.DoesPass(new Rules( new RequireKeys("detail_key") )));
+        AssertPasses(new Rules( new RequireKeys("string_key", "integer_key") ));
+        AssertFails(new Rules( new RequireKeys("string_key", "foo") ));
+        AssertPasses(new Rules( new RequireKeys("detail_key") ));
     }
 
     [Fact]
     public void ForbiddenKeys() {
-        Assert.True(_packet.DoesPass(new Rules(new ForbidKeys("foo"))));
-        Assert.False(_packet.DoesPass(new Rules(new ForbidKeys("string_key", "foo"))));
-        Assert.True(_packet.DoesPass(new Rules(new ForbidKeys("null_key", "empty_string", "empty_list_key"))));
+        AssertPasses(new Rules(new ForbidKeys("foo")));
+        AssertFails(new Rules(new ForbidKeys("string_key", "foo")));
+        AssertPasses(new Rules(new ForbidKeys("null_key", "empty_string", "empty_list_key")));
     }
 
     [Fact]
     public void RequireSpecificString() {
-        Assert.True(_packet.DoesPass(new Rules(new RequireValue("string_key", "rental_offer_engine"))));
-        Assert.False(_packet.DoesPass(new Rules(new RequireValue("string_key", "foo"))));
-        Assert.False(_packet.DoesPass(new Rules(new RequireValue("bar", "foo"))));
+        AssertPasses(new Rules(new RequireValue("string_key", "rental_offer_engine")));
+        AssertFails(new Rules(new RequireValue("string_key", "foo")));
+        AssertFails(new Rules(new RequireValue("bar", "foo")));
     }
 
     [Fact]
     public void RequireSpecificNumber() {
-        Assert.True(_packet.DoesPass(new Rules(new RequireValue("integer_key", 7))));
-        Assert.True(_packet.DoesPass(new Rules(new RequireValue("integer_key", 7.0))));
-        Assert.False(_packet.DoesPass(new Rules(new RequireValue("integer_key", 8))));
-        Assert.True(_packet.DoesPass(new Rules(new RequireValue("double_key", 7.5))));
-        Assert.False(_packet.DoesPass(new Rules(new RequireValue("double_key", 8))));
-        Assert.False(_packet.DoesPass(new Rules(new RequireValue("integer_key", "foo"))));
+        AssertPasses(new Rules(new RequireValue("integer_key", 7)));
+        AssertPasses(new Rules(new RequireValue("integer_key", 7.0)));
+        AssertFails(new Rules(new RequireValue("integer_key", 8)));
+        AssertPasses(new Rules(new RequireValue("double_key", 7.5)));
+        AssertFails(new Rules(new RequireValue("double_key", 8)));
+        AssertFails(new Rules(new RequireValue("integer_key", "foo")));
     }
 
     [Fact]
     public void RequireSpecificBoolean() {
-        Assert.True(_packet.DoesPass(new Rules(new RequireValue("boolean_key", true))));
-        Assert.False(_packet.DoesPass(new Rules(new RequireValue("boolean_key", false))));
-        Assert.False(_packet.DoesPass(new Rules(new RequireValue("boolean_string_key", "true"))));
-        Assert.True(_packet.DoesPass(new Rules(new RequireValue("boolean_string_key", "false"))));
-        Assert.False(_packet.DoesPass(new Rules(new RequireValue("boolean_key", "foo"))));
+        AssertPasses(new Rules(new RequireValue("boolean_key", true)));
+        AssertFails(new Rules(new RequireValue("boolean_key", false)));
+        AssertFails(new Rules(new RequireValue("boolean_string_key", "true")));
+        AssertPasses(new Rules(new RequireValue("boolean_string_key", "false")));
+        AssertFails(new Rules(new RequireValue("boolean_key", "foo")));
     }
 
     [Fact]
     public void CompoundRules() {
-        Assert.True(_packet.DoesPass(new Rules(
+        AssertPasses(new Rules(
             new RequireKeys("string_key", "integer_key"),
             new RequireValue("boolean_key", true),
             new ForbidKeys("null_key", "empty_string", "empty_list_key"),
             new RequireKeys("detail_key", "boolean_string_key")
-        )));
+        ));
+    }
+
+    private void AssertPasses(Rules rules) {
+        Assert.False(_packet.Evaluate(rules).HasErrors());
+    }
+
+    private void AssertFails(Rules rules) {
+        Assert.True(_packet.Evaluate(rules).HasErrors());
     }
 }

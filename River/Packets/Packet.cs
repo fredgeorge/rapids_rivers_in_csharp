@@ -87,8 +87,12 @@ public class Packet {
         return Has(key, JsonValueKind.String) && this._map[key].TryGetDateTime(out parsedValue);
     }
 
-    public bool DoesPass(Rules rules) {
-        return rules.All((rule) => rule.IsValid(this));
+    public Status Evaluate(Rules rules) {
+        var result = new Status();
+        foreach (var rule in rules) {
+            rule.Evaluate(this, result);
+        }
+        return result;
     }
 }
 

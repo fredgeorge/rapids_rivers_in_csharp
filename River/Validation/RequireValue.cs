@@ -36,8 +36,15 @@ public class RequireValue : RuleGenerator {
             _requiredValue = requiredValue;
         }
 
-        public bool IsValid(Packet packet) {
-            return packet.Has(_key, JsonValueKind.String) && packet.String(_key) == _requiredValue;
+        public void Evaluate(Packet packet, Status status) {
+            if (packet.IsMissing(_key)) status.UnexpectedlyMissing(_key);
+            else if (packet.Has(_key, JsonValueKind.String) && packet.String(_key) == _requiredValue)
+                status.FoundValue(_key, _requiredValue);
+            else status.MissingValue(_key, _requiredValue);
+        }
+
+        public override string ToString() {
+            return $"Require key <{_key}> has value <{_requiredValue}>";
         }
     }
     
@@ -50,8 +57,15 @@ public class RequireValue : RuleGenerator {
             _requiredValue = requiredValue;
         }
 
-        public bool IsValid(Packet packet) {
-            return packet.Has(_key, JsonValueKind.Number) && packet.Double(_key) == _requiredValue;
+        public void Evaluate(Packet packet, Status status) {
+            if (packet.IsMissing(_key)) status.UnexpectedlyMissing(_key);
+            else if (packet.Has(_key, JsonValueKind.Number) && packet.Double(_key) == _requiredValue)
+                status.FoundValue(_key, _requiredValue);
+            else status.MissingValue(_key, _requiredValue);
+        }
+
+        public override string ToString() {
+            return $"Require key <{_key}> has value <{_requiredValue}>";
         }
     }
     
@@ -64,8 +78,16 @@ public class RequireValue : RuleGenerator {
             _requiredValue = requiredValue;
         }
 
-        public bool IsValid(Packet packet) {
-            return (packet.Has(_key, JsonValueKind.True) || packet.Has(_key, JsonValueKind.False)) && packet.Boolean(_key) == _requiredValue;
+        public void Evaluate(Packet packet, Status status) {
+            if (packet.IsMissing(_key)) status.UnexpectedlyMissing(_key);
+            else if ((packet.Has(_key, JsonValueKind.True) || packet.Has(_key, JsonValueKind.False)) 
+                     && packet.Boolean(_key) == _requiredValue)
+                status.FoundValue(_key, _requiredValue);
+            else status.MissingValue(_key, _requiredValue);
+        }
+
+        public override string ToString() {
+            return $"Require key <{_key}> has value <{_requiredValue}>";
         }
     }
 }

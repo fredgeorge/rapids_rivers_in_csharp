@@ -25,8 +25,13 @@ public class ForbidKeys : RuleGenerator {
             _key = key;
         }
 
-        public bool IsValid(Packet packet) {
-            return packet.IsMissing(_key);
+        public void Evaluate(Packet packet, Status status) {
+            if (packet.IsMissing(_key)) status.MissingExpected(_key);
+            else status.UnexpectedlyFound(_key);
+        }
+
+        public override string ToString() {
+            return $"Forbid key <{_key}>";
         }
     }
 }
