@@ -39,12 +39,9 @@ public class ValidationTest {
 
     [Fact]
     public void RequiredKeys() {
-        Assert.True(_packet.DoesPass(new Rules(
-            new RequireKeys("string_key", "integer_key")
-        )));
-        Assert.False(_packet.DoesPass(new Rules(
-            new RequireKeys("string_key", "foo")
-        )));
+        Assert.True(_packet.DoesPass(new Rules( new RequireKeys("string_key", "integer_key") )));
+        Assert.False(_packet.DoesPass(new Rules( new RequireKeys("string_key", "foo") )));
+        Assert.True(_packet.DoesPass(new Rules( new RequireKeys("detail_key") )));
     }
 
     [Fact]
@@ -78,5 +75,15 @@ public class ValidationTest {
         Assert.False(_packet.DoesPass(new Rules(new RequireValue("boolean_string_key", "true"))));
         Assert.True(_packet.DoesPass(new Rules(new RequireValue("boolean_string_key", "false"))));
         Assert.False(_packet.DoesPass(new Rules(new RequireValue("boolean_key", "foo"))));
+    }
+
+    [Fact]
+    public void CompoundRules() {
+        Assert.True(_packet.DoesPass(new Rules(
+            new RequireKeys("string_key", "integer_key"),
+            new RequireValue("boolean_key", true),
+            new ForbidKeys("null_key", "empty_string", "empty_list_key"),
+            new RequireKeys("detail_key", "boolean_string_key")
+        )));
     }
 }
