@@ -59,14 +59,14 @@ public class Packet {
 
     public Packet this[string key] => new(Element(key, JsonValueKind.Object).GetRawText());
 
-    private JsonElement Element(string key, JsonValueKind kind) {
+    internal JsonElement Element(string key, JsonValueKind kind) {
         if (IsMissing(key)) throw new PacketException($"Key <{key}> does not exist", nameof(key));
         if (_map[key].ValueKind != kind)
             throw new PacketException($"Value of <{key}> is of type {_map[key].ValueKind} rather than expected type of {kind}", nameof(key));
         return _map[key];
     }
 
-    private bool Has(string key, JsonValueKind kind) {
+    internal bool Has(string key, JsonValueKind kind) {
         return Has(key) && _map[key].ValueKind == kind;
     }
     

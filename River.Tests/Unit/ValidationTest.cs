@@ -27,6 +27,11 @@ public class ValidationTest {
     private readonly Packet _packet = new(Original);
 
     [Fact]
+    public void NoRules() {
+        Assert.True(_packet.DoesPass(new Rules()));
+    }
+
+    [Fact]
     public void RequiredKeys() {
         Assert.True(_packet.DoesPass(new Rules(
             new RequireKeys("string_key", "integer_key")
@@ -41,5 +46,10 @@ public class ValidationTest {
         Assert.True(_packet.DoesPass(new Rules( new ForbidKeys("foo") )));
         Assert.False(_packet.DoesPass(new Rules( new ForbidKeys("string_key", "foo") )));
         Assert.True(_packet.DoesPass(new Rules( new ForbidKeys("null_key", "empty_string", "empty_list_key") )));
+    }
+
+    [Fact]
+    public void RequireSpecificValue() {
+        Assert.True(_packet.DoesPass(new Rules( new RequireValue("string_key", "rental_offer_engine") )));
     }
 }
