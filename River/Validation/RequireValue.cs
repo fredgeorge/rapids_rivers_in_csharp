@@ -12,6 +12,10 @@ public class RequireValue : RuleGenerator {
     public RequireValue(string key, double value) {
         _rule = new RequireNumber(key, value);
     }
+    
+    public RequireValue(string key, bool value) {
+        _rule = new RequireBoolean(key, value);
+    }
 
     public IList<Rule> Rules() {
         return new List<Rule>() { _rule };
@@ -42,6 +46,20 @@ public class RequireValue : RuleGenerator {
 
         public bool IsValid(Packet packet) {
             return packet.Has(_key, JsonValueKind.Number) && packet.Double(_key) == _requiredValue;
+        }
+    }
+    
+    private class RequireBoolean : Rule {
+        private readonly string _key;
+        private readonly bool _requiredValue;
+
+        internal RequireBoolean(string key, bool requiredValue) {
+            _key = key;
+            _requiredValue = requiredValue;
+        }
+
+        public bool IsValid(Packet packet) {
+            return (packet.Has(_key, JsonValueKind.True) || packet.Has(_key, JsonValueKind.False)) && packet.Boolean(_key) == _requiredValue;
         }
     }
 }

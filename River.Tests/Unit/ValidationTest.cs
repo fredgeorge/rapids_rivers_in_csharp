@@ -64,4 +64,13 @@ public class ValidationTest {
         Assert.False(_packet.DoesPass(new Rules(new RequireValue("double_key", 8))));
         Assert.False(_packet.DoesPass(new Rules(new RequireValue("integer_key", "foo"))));
     }
+
+    [Fact]
+    public void RequireSpecificBoolean() {
+        Assert.True(_packet.DoesPass(new Rules(new RequireValue("boolean_key", true))));
+        Assert.False(_packet.DoesPass(new Rules(new RequireValue("boolean_key", false))));
+        Assert.False(_packet.DoesPass(new Rules(new RequireValue("boolean_string_key", "true"))));
+        Assert.True(_packet.DoesPass(new Rules(new RequireValue("boolean_string_key", "false"))));
+        Assert.False(_packet.DoesPass(new Rules(new RequireValue("boolean_key", "foo"))));
+    }
 }
