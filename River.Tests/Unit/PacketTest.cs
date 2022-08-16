@@ -17,7 +17,11 @@ public class PacketTest {
         ""date_time_key"": ""2022-03-03T00:00:00Z"",
         ""string_list_key"":[""foo"",""bar""],
         ""integer_list_key"":[2,4],
-        ""empty_list_key"":[]
+        ""empty_list_key"":[],
+        ""detail_key"":{
+            ""detail_string_key"":""upgrade"",
+            ""detail_double_key"":10.75
+        }
     }";
 
     private readonly Packet _packet = new(Original);
@@ -54,5 +58,12 @@ public class PacketTest {
         Assert.Throws<PacketException>(() => _packet.Integer("double_key"));
         Assert.Throws<PacketException>(() => _packet.Double("string_key"));
         Assert.Throws<PacketException>(() => _packet.DateTime("string_key"));
+    }
+
+    [Fact]
+    public void DetailExtraction() {
+        Assert.Equal("upgrade", _packet["detail_key"].String("detail_string_key"));
+        Assert.Equal(10.75, _packet["detail_key"].Double("detail_double_key"));
+        Assert.Throws<PacketException>(() => _packet["detail_key"].Integer("detail_double_key"));
     }
 }

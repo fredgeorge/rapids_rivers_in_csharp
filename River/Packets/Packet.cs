@@ -56,6 +56,8 @@ public class Packet {
         throw new PacketException($"Value of <{key}> is of type {_map[key].ValueKind} rather than expected type of Boolean");
     }
 
+    public Packet this[string key] => new(Element(key, JsonValueKind.Object).GetRawText());
+
     private JsonElement Element(string key, JsonValueKind kind) {
         if (IsMissing(key)) throw new PacketException($"Key <{key}> does not exist", nameof(key));
         if (_map[key].ValueKind != kind)
