@@ -13,40 +13,55 @@ namespace RapidsRivers.Rivers;
 // Understands a themed flow of messages
 public class River : RapidsConnection.MessageListener {
     private readonly RapidsConnection _connection;
-    private readonly List<Rule> _rules;
+    private readonly Rules _rules;
     private readonly int _maxReadCount;
 
-    private readonly List<PacketListener> listeners = new();
-    private readonly List<SystemListener> systemListeners = new();
+    private readonly List<PacketListener> _listeners = new();
+    private readonly List<SystemListener> _systemListeners = new();
 
-    public River(RapidsConnection connection, List<Rule> rules, int maxReadCount) {
+    public River(RapidsConnection connection, Rules rules, int maxReadCount) {
         _connection = connection;
         _rules = rules;
         _maxReadCount = maxReadCount;
     }
+    
+    public void Register(PacketListener listener) {
+        _listeners.Add(listener);
+    }
 
     public void Message(RapidsConnection connection, string message) {
-        throw new NotImplementedException();
+        Status status = new();
+        try {
+            Packet packet = new(message);
+            packet.Evaluate(_rules);
+            if (status.HasErrors()) triggerRejectedPacket(connection, packet, status);
+            else triggerAcceptedPacket(connection, packet, status);
+        }
+        catch (PacketException e) {
+            status.Error(e.Message);
+        }
     }
 
-    public void register(PacketListener listener) {
-        listeners.Add(listener);
-    }
-    
+    private void triggerAcceptedPacket(RapidsConnection connection, Packet packet, Status problems) => 
+        _listeners.ForEach((service) => service.Packet(connection, packet, problems));
+
+    private void triggerRejectedPacket(RapidsConnection connection, Packet packet, Status problems) => 
+        _listeners.ForEach((service) => service.RejectedPacket(connection, packet, problems));
+
     public interface PacketListener {
-        string name { get; }
-        List<Rule> rules { get; }
+        string Name { get; }
+        Rules Rules { get; }
 
-        bool isStillAlive(RapidsConnection connection);
+        bool IsStillAlive(RapidsConnection connection);
 
-        void packet(RapidsConnection connection, Packet packet, Status information);
+        void Packet(RapidsConnection connection, Packet packet, Status information);
 
-        void rejectedPacket(RapidsConnection connection, Packet packet, Status problems) { }
+        void RejectedPacket(RapidsConnection connection, Packet packet, Status problems) { }
     }
 
     public interface SystemListener : PacketListener {
-        void invalidFormat(RapidsConnection connection, string invalidString, Status problems);
+        void InvalidFormat(RapidsConnection connection, string invalidString, Status problems);
 
-        void loopDetected(RapidsConnection connection, Packet packet, Status problems);
+        void LoopDetected(RapidsConnection connection, Packet packet, Status problems);
     }
 }

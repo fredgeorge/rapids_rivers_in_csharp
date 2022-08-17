@@ -40,6 +40,10 @@ public class Status {
         _errorMessages.Add($"Required key of <{key}> is missing required value of <{requiredValue}>");
     }
 
+    public void Error(string message) {
+        _errorMessages.Add(message);
+    }
+
     public override string ToString() {
         var result = new StringBuilder("Status of Evaluation:\n");
         result.Append("\tError messages: ");

@@ -4,32 +4,43 @@
  * Licensed under the MIT License; see LICENSE file in root.
  */
 
-using System;
 using System.Collections.Generic;
 using RapidsRivers.Packets;
 using RapidsRivers.Rapids;
 
 namespace RapidsRivers.Tests.Util; 
 
-internal class TestConnection: RapidsConnection {
-    private readonly List<RapidsConnection.MessageListener> _rivers = new();
-    private readonly List<string> _sentMessages = new();
-    
-    public void Register(RapidsRivers.Rivers.River.PacketListener listener) {
-        var river = new RapidsRivers.Rivers.River(this, listener.rules, 0);
+internal class TestConnection : RapidsConnection {
+    private readonly List<Rivers.River> _rivers = new();
+    private readonly Queue<string> _messages = new();
+    internal readonly List<Packet> AllPackets = new();
+
+
+    public void Register(Rivers.River.PacketListener listener) {
+        var river = new Rivers.River(this, listener.Rules, 0);
+        river.Register(listener);
         _rivers.Add(river);
-        river.register(listener);
     }
 
-    public void Register(RapidsRivers.Rivers.River.SystemListener listener) {
-        throw new NotImplementedException();
+    public void Register(Rivers.River.SystemListener listener)  {
+        var river = new Rivers.River(this, listener.Rules, 0);
+        river.Register(listener);
+        _rivers.Add(river);
+    }
+
+    internal void Publish(string message) {
+        if (_messages.Count > 0) _messages.Enqueue(message);
+        else {
+            _messages.Enqueue(message);
+            while (_messages.Count > 0) {
+                var nextMessage = _messages.Peek();
+                _rivers.ForEach(river => river.Message(this, nextMessage));
+                _messages.Dequeue();
+            }
+        }
     }
 
     public void Publish(RapidsPacket packet) {
-        _sentMessages.Add(packet.ToJsonString());
-    }
-
-    internal void InjectMessage(string content) {
-        _rivers.ForEach((river) => river.Message(this, content));
+        Publish(packet.ToJsonString());
     }
 }

@@ -12,7 +12,7 @@ using RapidsRivers.Validation;
 namespace RapidsRivers.Packets; 
 
 // Understands a specific message on an Event Bus
-public class Packet {
+public class Packet : RapidsPacket {
     private readonly Dictionary<string, JsonElement> _map;
 
     public Packet(string jsonString) {
@@ -26,7 +26,7 @@ public class Packet {
         }
     }
 
-    public bool Has(string key) =>
+    private bool Has(string key) =>
         _map.ContainsKey(key)
         && (_map[key].ValueKind switch {
             JsonValueKind.Null => false,
@@ -67,7 +67,17 @@ public class Packet {
 
     public Packet this[string key] => new(Element(key, JsonValueKind.Object).GetRawText());
 
-    internal JsonElement Element(string key, JsonValueKind kind) {
+    public Status Evaluate(Rules rules) {
+        var result = new Status();
+        foreach (var rule in rules) {
+            rule.Evaluate(this, result);
+        }
+        return result;
+    }
+
+    public string ToJsonString() => JsonSerializer.Serialize(_map);
+
+    private JsonElement Element(string key, JsonValueKind kind) {
         if (IsMissing(key)) throw new PacketException($"Key <{key}> does not exist", nameof(key));
         if (_map[key].ValueKind != kind)
             throw new PacketException($"Value of <{key}> is of type {_map[key].ValueKind} rather than expected type of {kind}", nameof(key));
@@ -87,14 +97,6 @@ public class Packet {
     private bool IsDateTime(string key, out DateTime parsedValue) {
         parsedValue = default;
         return Has(key, JsonValueKind.String) && this._map[key].TryGetDateTime(out parsedValue);
-    }
-
-    public Status Evaluate(Rules rules) {
-        var result = new Status();
-        foreach (var rule in rules) {
-            rule.Evaluate(this, result);
-        }
-        return result;
     }
 }
 
