@@ -4,14 +4,19 @@
  * Licensed under the MIT License; see LICENSE file in root.
  */
 
+using System;
+using System.Linq;
 using RapidsRivers.Packets;
 using RapidsRivers.Tests.Util;
 using RapidsRivers.Validation;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace RapidsRivers.Tests.Unit; 
 
 public class RiverTest {
+    private readonly ITestOutputHelper _testOutputHelper;
+
     private const string Original = @"{
         ""string_key"":""rental_offer_engine"",
         ""integer_key"":7,
@@ -27,6 +32,9 @@ public class RiverTest {
     }";
     private readonly Packet _packet = new(Original);
     private readonly TestConnection _connection = new TestConnection();
+    public RiverTest(ITestOutputHelper testOutputHelper) {
+        _testOutputHelper = testOutputHelper;
+    }
 
     [Fact]
     public void UnfilteredService() {
@@ -56,7 +64,7 @@ public class RiverTest {
     [Fact]
     public void InvalidJson() {
         var normalService = new TestService(new Rules());
-        var systemService = new TestSystemService(_connection, new Rules());
+        var systemService = new TestSystemService(new Rules());
         _connection.Register(normalService);
         _connection.Register(systemService);
         _connection.Publish("{");
@@ -72,5 +80,27 @@ public class RiverTest {
         var service = new TestService(new Rules());
         _connection.Register(service);
         Assert.Single(_connection.AllPackets);
+    }
+
+    [Fact]
+    public void HeartBeats() {
+        var normalService = new TestService(new Rules());
+        var deadService = new DeadService(new Rules());
+        var systemService = new TestSystemService(new Rules());
+        _connection.Register(normalService);
+        _connection.Register(deadService);
+        _connection.Register(systemService);
+        Assert.Empty(normalService.AcceptedPackets);
+        Assert.Empty(deadService.AcceptedPackets);
+        Assert.Empty(systemService.AcceptedPackets); 
+        HeartBeatPacket heartBeat = new();
+        _connection.Publish(heartBeat); 
+        _testOutputHelper.WriteLine(string.Join("\n", _connection.AllMessages));
+        Assert.Empty(normalService.AcceptedPackets);
+        Assert.Equal(3, systemService.AcceptedPackets.Count); // HeartBeat + 2 responses
+        _connection.Publish(heartBeat);
+        _connection.Publish(heartBeat);
+        // _testOutputHelper.WriteLine(string.Join("\n", _connection.AllMessages));
+        Assert.Equal(9, systemService.AcceptedPackets.Count); // HeartBeat + 2 responses
     }
 }

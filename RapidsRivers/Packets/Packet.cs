@@ -27,6 +27,14 @@ public class Packet : RapidsPacket {
             throw new PacketException("JSON string could not be deserialized", nameof(jsonString), ex);
         }
     }
+    
+    public Packet Set(string key, string value) {
+        ArgumentNullException.ThrowIfNull(value);
+        if (string.IsNullOrEmpty(value)) throw new PacketException("String can not be empty", nameof(value));
+        if (key == "") throw new PacketException("Key can not be empty", nameof(key));
+        _map[key] = JsonSerializer.SerializeToElement(value);
+        return this;
+    }
 
     private bool Has(string key) =>
         _map.ContainsKey(key)
@@ -61,7 +69,10 @@ public class Packet : RapidsPacket {
         throw new PacketException($"Value of <{key}> is of type {_map[key].ValueKind} rather than expected type of Boolean");
     }
 
-    public Packet this[string key] => new(Element(key, JsonValueKind.Object).GetRawText());
+    public Packet this[string key] {
+        get => new(Element(key, JsonValueKind.Object).GetRawText());
+        set => throw new NotImplementedException();
+    }
 
     public Status Evaluate(Rules rules) {
         var result = new Status(_jsonString);
@@ -82,7 +93,13 @@ public class Packet : RapidsPacket {
 
     internal bool Has(string key, JsonValueKind kind) => Has(key) && _map[key].ValueKind == kind;
 
-    internal bool IsSystem() => Has(PACKET_TYPE_KEY, JsonValueKind.String) && String(PACKET_TYPE_KEY) == SYSTEM_PACKET_TYPE_VALUE;
+    internal bool IsSystem() => 
+        Has(PACKET_TYPE_KEY, JsonValueKind.String) && String(PACKET_TYPE_KEY) == SYSTEM_PACKET_TYPE_VALUE;
+
+    internal bool IsHeartBeat() => !Evaluate(HeartBeatPacket.rules).HasErrors();
+
+    internal RapidsPacket ToHeartBeatResponse(River.PacketListener service) => 
+        new Packet(ToJsonString()).Set(HEART_BEAT_RESPONDER_KEY, service.Name);
 
     private bool IsBool(string key, out bool parsedValue) {
         parsedValue = false;

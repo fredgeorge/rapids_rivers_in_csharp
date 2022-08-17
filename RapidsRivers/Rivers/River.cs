@@ -38,8 +38,9 @@ public class River : RapidsConnection.MessageListener {
     public void Message(RapidsConnection connection, string message) {
         try {
             Packet packet = new(message);
-            var status = packet.Evaluate(_rules);
+            if (packet.IsHeartBeat()) triggerHeartBeatResponse(connection, packet);
             var listeners = packet.IsSystem() ? _systemListeners.ToList<PacketListener>() : _listeners;
+            var status = packet.Evaluate(_rules);
             if (status.HasErrors()) triggerRejectedPacket(listeners, connection, packet, status);
             else triggerAcceptedPacket(listeners, connection, packet, status);
         }
@@ -58,6 +59,11 @@ public class River : RapidsConnection.MessageListener {
 
     private void triggerInvalidFormat(RapidsConnection connection, string message, Status problems) =>
         _systemListeners.ForEach((service) => service.InvalidFormat(connection, message, problems));
+
+    private void triggerHeartBeatResponse(RapidsConnection connection, Packet packet) =>
+        _listeners.ForEach((service) => {
+            if (service.IsStillAlive(connection)) connection.Publish(packet.ToHeartBeatResponse(service));
+        });
 
     public interface PacketListener {
         string Name { get; }

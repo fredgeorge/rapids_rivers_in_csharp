@@ -24,7 +24,7 @@ internal class TestService : River.PacketListener {
         Rules = rules;
     }
 
-    public bool IsStillAlive(RapidsConnection connection) {
+    public virtual bool IsStillAlive(RapidsConnection connection) {
         return true;
     }
 
@@ -42,7 +42,7 @@ internal class TestService : River.PacketListener {
 internal class TestSystemService : TestService, River.SystemListener {
     internal readonly List<Status> FormatProblems = new();
     
-    internal TestSystemService(RapidsConnection connection, Rules rules) : base(rules) { }
+    internal TestSystemService(Rules rules) : base(rules) { }
     
     public void InvalidFormat(RapidsConnection connection, string invalidString, Status problems) {
         FormatProblems.Add(problems);
@@ -50,5 +50,14 @@ internal class TestSystemService : TestService, River.SystemListener {
 
     public void LoopDetected(RapidsConnection connection, Packet packet, Status problems) {
         throw new System.NotImplementedException();
+    }
+}
+
+internal class DeadService : TestService {
+    internal DeadService(Rules rules) : base(rules) { }
+    
+
+    public override bool IsStillAlive(RapidsConnection connection) {
+        return false;
     }
 }
