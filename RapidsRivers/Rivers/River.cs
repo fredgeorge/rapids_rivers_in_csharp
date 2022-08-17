@@ -30,15 +30,14 @@ public class River : RapidsConnection.MessageListener {
     }
 
     public void Message(RapidsConnection connection, string message) {
-        Status status = new();
         try {
             Packet packet = new(message);
-            packet.Evaluate(_rules);
+            var status = packet.Evaluate(_rules);
             if (status.HasErrors()) triggerRejectedPacket(connection, packet, status);
             else triggerAcceptedPacket(connection, packet, status);
         }
         catch (PacketException e) {
-            status.Error(e.Message);
+            new Status().Error(e.Message);
         }
     }
 
