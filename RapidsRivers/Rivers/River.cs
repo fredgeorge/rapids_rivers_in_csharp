@@ -37,7 +37,7 @@ public class River : RapidsConnection.MessageListener {
             else triggerAcceptedPacket(connection, packet, status);
         }
         catch (PacketException e) {
-            new Status().Error(e.Message);
+            new Status(message).Error(e.Message);
         }
     }
 

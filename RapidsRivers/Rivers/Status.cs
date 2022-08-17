@@ -9,8 +9,13 @@ using System.Text;
 namespace RapidsRivers.Rivers;
 
 public class Status {
+    private readonly string _originalPacketString;
     private readonly List<string> _informationalMessages = new();
     private readonly List<string> _errorMessages = new();
+
+    internal Status(string originalPacketString) {
+        _originalPacketString = originalPacketString;
+    }
     
     public bool HasErrors() {
         return _errorMessages.Count > 0;
@@ -45,8 +50,9 @@ public class Status {
     }
 
     public override string ToString() {
-        var result = new StringBuilder("Status of Evaluation:\n");
-        result.Append("\tError messages: ");
+        var result = new StringBuilder("Status of Evaluation of:\n");
+        result.Append($"\tOriginal packet: {_originalPacketString}\n");
+        result.Append("\tErrors: ");
         AppendTo(result, _errorMessages);
         result.Append("\tInformational messages: ");
         AppendTo(result, _informationalMessages);

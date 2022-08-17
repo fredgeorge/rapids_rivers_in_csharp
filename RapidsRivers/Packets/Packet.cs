@@ -13,11 +13,13 @@ namespace RapidsRivers.Packets;
 
 // Understands a specific message on an Event Bus
 public class Packet : RapidsPacket {
+    private readonly string _jsonString;
     private readonly Dictionary<string, JsonElement> _map;
 
     public Packet(string jsonString) {
         if (string.IsNullOrEmpty(jsonString))
             throw new PacketException("JSON string cannot be null or empty", nameof(jsonString));
+        _jsonString = jsonString;
         try {
             _map = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(jsonString)
                                 ?? throw new PacketException("JSON string could not be deserialized", nameof(jsonString));
@@ -68,7 +70,7 @@ public class Packet : RapidsPacket {
     public Packet this[string key] => new(Element(key, JsonValueKind.Object).GetRawText());
 
     public Status Evaluate(Rules rules) {
-        var result = new Status();
+        var result = new Status(_jsonString);
         foreach (var rule in rules) {
             rule.Evaluate(this, result);
         }
