@@ -6,7 +6,7 @@
 
 using System;
 
-namespace River.Tests.Util; 
+namespace RapidsRivers.Tests.Util; 
 
 internal static class DateTimeExtensions
 {

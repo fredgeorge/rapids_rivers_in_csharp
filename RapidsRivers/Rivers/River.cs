@@ -24,9 +24,14 @@ public class River : RapidsConnection.MessageListener {
         _rules = rules;
         _maxReadCount = maxReadCount;
     }
-    
+
     public void Register(PacketListener listener) {
         _listeners.Add(listener);
+    }
+
+    public void Register(SystemListener listener) {
+        _systemListeners.Add(listener);
+        Register((PacketListener)listener);
     }
 
     public void Message(RapidsConnection connection, string message) {
@@ -37,15 +42,20 @@ public class River : RapidsConnection.MessageListener {
             else triggerAcceptedPacket(connection, packet, status);
         }
         catch (PacketException e) {
-            new Status(message).Error(e.Message);
+            var status = new Status(message);
+            status.Error(e.Message);
+            triggerInvalidFormat(connection, message, status);
         }
     }
 
-    private void triggerAcceptedPacket(RapidsConnection connection, Packet packet, Status problems) => 
+    private void triggerAcceptedPacket(RapidsConnection connection, Packet packet, Status problems) =>
         _listeners.ForEach((service) => service.Packet(connection, packet, problems));
 
-    private void triggerRejectedPacket(RapidsConnection connection, Packet packet, Status problems) => 
+    private void triggerRejectedPacket(RapidsConnection connection, Packet packet, Status problems) =>
         _listeners.ForEach((service) => service.RejectedPacket(connection, packet, problems));
+
+    private void triggerInvalidFormat(RapidsConnection connection, string message, Status problems) =>
+        _systemListeners.ForEach((service) => service.InvalidFormat(connection, message, problems));
 
     public interface PacketListener {
         string Name { get; }
@@ -59,8 +69,8 @@ public class River : RapidsConnection.MessageListener {
     }
 
     public interface SystemListener : PacketListener {
-        void InvalidFormat(RapidsConnection connection, string invalidString, Status problems);
+        void InvalidFormat(RapidsConnection connection, string invalidString, Status problems) { }
 
-        void LoopDetected(RapidsConnection connection, Packet packet, Status problems);
+        void LoopDetected(RapidsConnection connection, Packet packet, Status problems) { }
     }
 }

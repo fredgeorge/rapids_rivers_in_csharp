@@ -4,26 +4,23 @@
  * Licensed under the MIT License; see LICENSE file in root.
  */
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using RapidsRivers.Packets;
 using RapidsRivers.Rapids;
 using RapidsRivers.Rivers;
 using RapidsRivers.Validation;
-using River.Validation;
 
 namespace RapidsRivers.Tests.Util;
 
-internal class TestService : Rivers.River.PacketListener {
+internal class TestService : River.PacketListener {
     public string Name => $"TestService [{GetHashCode()}]";
     public Rules Rules { get; }
-    internal readonly List<Packet> acceptedPackets = new();
-    internal readonly List<Packet> rejectedPackets = new();
-    internal readonly List<Status> informations = new();
-    internal readonly List<Status> problems = new();
+    internal readonly List<Packet> AcceptedPackets = new();
+    internal readonly List<Packet> RejectedPackets = new();
+    internal readonly List<Status> Informations = new();
+    internal readonly List<Status> Problems = new();
 
-    internal TestService(RapidsConnection connection, Rules rules) {
+    internal TestService(Rules rules) {
         Rules = rules;
     }
 
@@ -32,12 +29,26 @@ internal class TestService : Rivers.River.PacketListener {
     }
 
     public void Packet(RapidsConnection connection, Packet packet, Status information) {
-        acceptedPackets.Add(packet);
-        informations.Add(information);
+        AcceptedPackets.Add(packet);
+        Informations.Add(information);
     }
 
     public void RejectedPacket(RapidsConnection connection, Packet packet, Status problems) {
-        rejectedPackets.Add(packet);
-        this.problems.Add(problems);
+        RejectedPackets.Add(packet);
+        Problems.Add(problems);
+    }
+}
+
+internal class TestSystemService : TestService, River.SystemListener {
+    internal readonly List<Status> FormatProblems = new();
+    
+    internal TestSystemService(RapidsConnection connection, Rules rules) : base(rules) { }
+    
+    public void InvalidFormat(RapidsConnection connection, string invalidString, Status problems) {
+        FormatProblems.Add(problems);
+    }
+
+    public void LoopDetected(RapidsConnection connection, Packet packet, Status problems) {
+        throw new System.NotImplementedException();
     }
 }

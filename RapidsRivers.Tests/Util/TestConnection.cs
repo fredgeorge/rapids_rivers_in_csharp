@@ -7,23 +7,24 @@
 using System.Collections.Generic;
 using RapidsRivers.Packets;
 using RapidsRivers.Rapids;
+using RapidsRivers.Rivers;
 
 namespace RapidsRivers.Tests.Util; 
 
 internal class TestConnection : RapidsConnection {
-    private readonly List<Rivers.River> _rivers = new();
+    private readonly List<River> _rivers = new();
     private readonly Queue<string> _messages = new();
     internal readonly List<Packet> AllPackets = new();
 
 
-    public void Register(Rivers.River.PacketListener listener) {
-        var river = new Rivers.River(this, listener.Rules, 0);
+    public void Register(River.PacketListener listener) {
+        var river = new River(this, listener.Rules, 0);
         river.Register(listener);
         _rivers.Add(river);
     }
 
-    public void Register(Rivers.River.SystemListener listener)  {
-        var river = new Rivers.River(this, listener.Rules, 0);
+    public void Register(River.SystemListener listener)  {
+        var river = new River(this, listener.Rules, 0);
         river.Register(listener);
         _rivers.Add(river);
     }

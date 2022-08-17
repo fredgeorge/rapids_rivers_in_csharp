@@ -30,26 +30,40 @@ public class RiverTest {
 
     [Fact]
     public void UnfilteredService() {
-        var service = new TestService(_connection, new Rules());
+        var service = new TestService(new Rules());
         _connection.Register(service);
         _connection.Publish(_packet);
-        Assert.Single(service.acceptedPackets);
-        Assert.Single(service.informations);
-        Assert.False(service.informations[0].HasErrors());
-        Assert.Empty(service.rejectedPackets);
-        Assert.Empty(service.problems);
+        Assert.Single(service.AcceptedPackets);
+        Assert.Single(service.Informations);
+        Assert.False(service.Informations[0].HasErrors());
+        Assert.Empty(service.RejectedPackets);
+        Assert.Empty(service.Problems);
     }
 
     [Fact]
     public void FilteredServices() {
-        var acceptedService = new TestService(_connection, new Rules(new RequireKeys("integer_key")));
-        var rejectedService = new TestService(_connection, new Rules(new ForbidKeys("integer_key")));
+        var acceptedService = new TestService(new Rules(new RequireKeys("integer_key")));
+        var rejectedService = new TestService(new Rules(new ForbidKeys("integer_key")));
         _connection.Register(acceptedService);
         _connection.Register(rejectedService);
         _connection.Publish(_packet);
-        Assert.Single(acceptedService.acceptedPackets);
-        Assert.False(acceptedService.informations[0].HasErrors());
-        Assert.Single(rejectedService.rejectedPackets);
-        Assert.True(rejectedService.problems[0].HasErrors());
+        Assert.Single(acceptedService.AcceptedPackets);
+        Assert.False(acceptedService.Informations[0].HasErrors());
+        Assert.Single(rejectedService.RejectedPackets);
+        Assert.True(rejectedService.Problems[0].HasErrors());
+    }
+
+    [Fact]
+    public void InvalidJson() {
+        var normalService = new TestService(new Rules());
+        var systemService = new TestSystemService(_connection, new Rules());
+        _connection.Register(normalService);
+        _connection.Register(systemService);
+        _connection.Publish("{");
+        Assert.Empty(normalService.Informations);
+        Assert.Empty(normalService.Problems); // Not processed
+        Assert.Empty(systemService.Informations);
+        Assert.Empty(systemService.Problems); // Not processed here either
+        Assert.Single(systemService.FormatProblems); // Handled here!
     }
 }

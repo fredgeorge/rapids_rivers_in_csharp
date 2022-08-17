@@ -4,9 +4,7 @@
  * Licensed under the MIT License; see LICENSE file in root.
  */
 
-using RapidsRivers.Validation;
-
-namespace River.Validation; 
+namespace RapidsRivers.Validation; 
 
 // Factory to create Rules for a Packet
 public interface RuleGenerator {

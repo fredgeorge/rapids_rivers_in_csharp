@@ -5,10 +5,10 @@
  */
 
 using RapidsRivers.Packets;
-using River.Tests.Util;
+using RapidsRivers.Tests.Util;
 using Xunit;
 
-namespace RiverEngine.Tests.Unit;
+namespace RapidsRivers.Tests.Unit;
 
 public class PacketTest {
     private const string Original = @"{
