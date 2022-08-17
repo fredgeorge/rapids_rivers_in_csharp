@@ -14,9 +14,9 @@ namespace RapidsRivers.Tests.Util;
 internal class TestConnection : RapidsConnection {
     private readonly List<River> _rivers = new();
     private readonly Queue<string> _messages = new();
-    internal readonly List<Packet> AllPackets = new();
-
-
+    internal readonly List<RapidsPacket> AllPackets = new();
+    internal readonly List<string> AllMessages = new();
+    
     public void Register(River.PacketListener listener) {
         var river = new River(this, listener.Rules, 0);
         river.Register(listener);
@@ -30,6 +30,7 @@ internal class TestConnection : RapidsConnection {
     }
 
     internal void Publish(string message) {
+        AllMessages.Add(message);
         if (_messages.Count > 0) _messages.Enqueue(message);
         else {
             _messages.Enqueue(message);
@@ -42,6 +43,7 @@ internal class TestConnection : RapidsConnection {
     }
 
     public void Publish(RapidsPacket packet) {
+        AllPackets.Add(packet);
         Publish(packet.ToJsonString());
     }
 }

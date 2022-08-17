@@ -7,10 +7,11 @@
 using System.Text.Json;
 using RapidsRivers.Rivers;
 using RapidsRivers.Validation;
+using static RapidsRivers.Packets.SystemConstants;
 
 namespace RapidsRivers.Packets; 
 
-// Understands a specific message on an Event Bus
+// Understands a specific JSON-formatted message on an Event Bus
 public class Packet : RapidsPacket {
     private readonly string _jsonString;
     private readonly Dictionary<string, JsonElement> _map;
@@ -36,13 +37,9 @@ public class Packet : RapidsPacket {
             _ => true
         });
 
-    public bool IsMissing(string key) {
-        return !Has(key);
-    }
+    public bool IsMissing(string key) => !Has(key);
 
-    public string String(string key) {
-        return Element(key, JsonValueKind.String).GetString()!;
-    }
+    public string String(string key) => Element(key, JsonValueKind.String).GetString()!;
 
     public int Integer(string key) {
         var value = Double(key);
@@ -50,9 +47,7 @@ public class Packet : RapidsPacket {
         return (int)value;
     }
 
-    public double Double(string key) {
-        return Element(key, JsonValueKind.Number).GetDouble();
-    }
+    public double Double(string key) => Element(key, JsonValueKind.Number).GetDouble();
 
     public DateTime DateTime(string key) {
         if (IsDateTime(key, out var parsedValue)) return parsedValue;
@@ -85,10 +80,10 @@ public class Packet : RapidsPacket {
         return _map[key];
     }
 
-    internal bool Has(string key, JsonValueKind kind) {
-        return Has(key) && _map[key].ValueKind == kind;
-    }
-    
+    internal bool Has(string key, JsonValueKind kind) => Has(key) && _map[key].ValueKind == kind;
+
+    internal bool IsSystem() => Has(PACKET_TYPE_KEY, JsonValueKind.String) && String(PACKET_TYPE_KEY) == SYSTEM_PACKET_TYPE_VALUE;
+
     private bool IsBool(string key, out bool parsedValue) {
         parsedValue = false;
         return Has(key, JsonValueKind.String) &&

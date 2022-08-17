@@ -27,6 +27,7 @@ public class River : RapidsConnection.MessageListener {
 
     public void Register(PacketListener listener) {
         _listeners.Add(listener);
+        _connection.Publish(new StartUpPacket(listener));
     }
 
     public void Register(SystemListener listener) {
@@ -38,8 +39,9 @@ public class River : RapidsConnection.MessageListener {
         try {
             Packet packet = new(message);
             var status = packet.Evaluate(_rules);
-            if (status.HasErrors()) triggerRejectedPacket(connection, packet, status);
-            else triggerAcceptedPacket(connection, packet, status);
+            var listeners = packet.IsSystem() ? _systemListeners.ToList<PacketListener>() : _listeners;
+            if (status.HasErrors()) triggerRejectedPacket(listeners, connection, packet, status);
+            else triggerAcceptedPacket(listeners, connection, packet, status);
         }
         catch (PacketException e) {
             var status = new Status(message);
@@ -48,11 +50,11 @@ public class River : RapidsConnection.MessageListener {
         }
     }
 
-    private void triggerAcceptedPacket(RapidsConnection connection, Packet packet, Status problems) =>
-        _listeners.ForEach((service) => service.Packet(connection, packet, problems));
+    private void triggerAcceptedPacket(List<PacketListener> listeners, RapidsConnection connection, Packet packet, Status problems) =>
+        listeners.ForEach((service) => service.Packet(connection, packet, problems));
 
-    private void triggerRejectedPacket(RapidsConnection connection, Packet packet, Status problems) =>
-        _listeners.ForEach((service) => service.RejectedPacket(connection, packet, problems));
+    private void triggerRejectedPacket(List<PacketListener> listeners, RapidsConnection connection, Packet packet, Status problems) =>
+        listeners.ForEach((service) => service.RejectedPacket(connection, packet, problems));
 
     private void triggerInvalidFormat(RapidsConnection connection, string message, Status problems) =>
         _systemListeners.ForEach((service) => service.InvalidFormat(connection, message, problems));

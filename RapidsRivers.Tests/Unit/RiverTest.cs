@@ -66,4 +66,11 @@ public class RiverTest {
         Assert.Empty(systemService.Problems); // Not processed here either
         Assert.Single(systemService.FormatProblems); // Handled here!
     }
+
+    [Fact]
+    public void StartUp() {
+        var service = new TestService(new Rules());
+        _connection.Register(service);
+        Assert.Single(_connection.AllPackets);
+    }
 }
