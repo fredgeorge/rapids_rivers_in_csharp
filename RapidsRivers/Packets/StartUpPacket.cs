@@ -19,10 +19,10 @@ public class StartUpPacket : RapidsPacket {
 
     public string ToJsonString() {
         return JsonSerializer.Serialize(new Dictionary<string, object>() {
-            { COMMUNITY_KEY, SYSTEM_COMMUNITY_VALUE },
-            { PACKET_TYPE_KEY, SYSTEM_PACKET_TYPE_VALUE },
-            { SYSTEM_PURPOSE_KEY, START_UP_SYSTEM_PURPOSE_VALUE },
-            { SERVICE_NAME_KEY, _serviceName }
+            { CommunityKey, SystemCommunityValue },
+            { PacketTypeKey, SystemPacketTypeValue },
+            { SystemPurposeKey, StartUpSystemPurposeValue },
+            { ServiceNameKey, _serviceName }
         });
     }
 }

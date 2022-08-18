@@ -7,21 +7,21 @@
 namespace RapidsRivers.Packets; 
 
 internal static class SystemConstants {
-    internal const string COMMUNITY_KEY = "community";
-    internal const string SYSTEM_COMMUNITY_VALUE = "system";
+    internal const string CommunityKey = "community";
+    internal const string SystemCommunityValue = "system";
     
-    internal const string PACKET_TYPE_KEY = "packet_type";
-    internal const string SYSTEM_PACKET_TYPE_VALUE = "system_packet";
+    internal const string PacketTypeKey = "packet_type";
+    internal const string SystemPacketTypeValue = "system_packet";
     
-    internal const string SYSTEM_PURPOSE_KEY = "system_purpose";
-    internal const string START_UP_SYSTEM_PURPOSE_VALUE = "start_up";
-    internal const string HEART_BEAT_PURPOSE_VALUE = "heart_beat";
+    internal const string SystemPurposeKey = "system_purpose";
+    internal const string StartUpSystemPurposeValue = "start_up";
+    internal const string HeartBeatPurposeValue = "heart_beat";
 
-    internal const string SERVICE_NAME_KEY = "service_name";
+    internal const string ServiceNameKey = "service_name";
     
-    internal const string HEART_BEAT_GENERATOR_KEY = "heart_beat_generator";
+    internal const string HeartBeatGeneratorKey = "heart_beat_generator";
     
-    internal const string HEART_BEAT_RESPONDER_KEY = "heart_beat_responder";
+    internal const string HeartBeatResponderKey = "heart_beat_responder";
     
-    internal const string HEART_BEAT_INDEX_KEY = "heart_beat_index";
+    internal const string HeartBeatIndexKey = "heart_beat_index";
 }

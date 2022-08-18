@@ -98,12 +98,12 @@ public class Packet : RapidsPacket {
     internal bool Has(string key, JsonValueKind kind) => Has(key) && _map[key].ValueKind == kind;
 
     internal bool IsSystem() => 
-        Has(PACKET_TYPE_KEY, JsonValueKind.String) && String(PACKET_TYPE_KEY) == SYSTEM_PACKET_TYPE_VALUE;
+        Has(PacketTypeKey, JsonValueKind.String) && String(PacketTypeKey) == SystemPacketTypeValue;
 
     internal bool IsHeartBeat() => !Evaluate(HeartBeatPacket.rules).HasErrors();
 
     internal RapidsPacket ToHeartBeatResponse(River.PacketListener service) => 
-        new Packet(ToJsonString()).Set(HEART_BEAT_RESPONDER_KEY, service.Name);
+        new Packet(ToJsonString()).Set(HeartBeatResponderKey, service.Name);
 
     private bool IsBool(string key, out bool parsedValue) {
         parsedValue = false;
