@@ -27,6 +27,8 @@ public class Packet : RapidsPacket {
             throw new PacketException("JSON string could not be deserialized", nameof(jsonString), ex);
         }
     }
+
+    public static Packet Empty() => new Packet("{}");
     
     public Packet Set(string key, string value) {
         ArgumentNullException.ThrowIfNull(value);
@@ -83,6 +85,8 @@ public class Packet : RapidsPacket {
     }
 
     public string ToJsonString() => JsonSerializer.Serialize(_map);
+
+    public override string ToString() => ToJsonString();
 
     private JsonElement Element(string key, JsonValueKind kind) {
         if (IsMissing(key)) throw new PacketException($"Key <{key}> does not exist", nameof(key));
