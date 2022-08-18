@@ -29,7 +29,7 @@ public class RiverTest {
         }
     }";
     private readonly Packet _packet = new(Original);
-    private readonly TestConnection _connection = new TestConnection();
+    private readonly TestConnection _connection = new(2);
     public RiverTest(ITestOutputHelper testOutputHelper) {
         _testOutputHelper = testOutputHelper;
     }
@@ -100,5 +100,25 @@ public class RiverTest {
         _connection.Publish(heartBeat);
         // _testOutputHelper.WriteLine(string.Join("\n", _connection.AllMessages));
         Assert.Equal(9, systemService.AcceptedPackets.Count); // HeartBeat + 2 responses
+    }
+
+    [Fact]
+    public void LoopDetection() {
+        var systemService = new TestSystemService(new Rules());
+        _connection.Register(systemService);
+        var packet = Packet.Empty();
+        _connection.Publish(packet);
+        Assert.Single(systemService.AcceptedPackets);
+        Assert.Empty(systemService.LoopPackets);
+        
+        packet.Set("system_read_count", 1);
+        _connection.Publish(packet);
+        Assert.Equal(2, systemService.AcceptedPackets.Count);
+        Assert.Empty(systemService.LoopPackets);
+        
+        packet.Set("system_read_count", 2); // Threshold is 2; count is incremented, then checked
+        _connection.Publish(packet);
+        Assert.Equal(2, systemService.AcceptedPackets.Count); // Packet not sent to service
+        Assert.Single(systemService.LoopPackets);
     }
 }
