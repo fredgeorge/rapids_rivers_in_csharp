@@ -13,7 +13,7 @@ using static RapidsRivers.Rivers.River;
 
 namespace MonitorService;
 
-public class Monitor : PacketListener {
+public class Monitor : SystemListener {
     public string Name => $"Monitor [{GetHashCode()}]";
 
     // Sample rule possibilities in comments below:

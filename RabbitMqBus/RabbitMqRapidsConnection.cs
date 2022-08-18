@@ -33,19 +33,14 @@ public class RabbitMqRapidsConnection : RapidsConnection {
             new Dictionary<string, object>()); // Either RabbitMQ finds the exchange, or makes it
     }
 
-    public void Register(PacketListener listener) {
-        var river = new River(this, listener.Rules, 0); // No sharing of Rivers in this implementation
-        var riverName = listener.Name; // River/Queue name can be Service name since one River per Service
-        river.Register(listener);
-        ConfigureQueueAsRiver(riverName);
-        Console.WriteLine($" [*] [service: {listener.Name}] Waiting for messages. To exit press CTRL+C");
-        ConsumeMessages(river, riverName);
-    }
+    public void Register(PacketListener listener) => Register(listener, river => river.Register(listener));
 
-    public void Register(SystemListener listener) {
+    public void Register(SystemListener listener) => Register(listener, river => river.Register(listener));
+
+    private void Register(PacketListener listener, Action<River> register ) {
         var river = new River(this, listener.Rules, 0); // No sharing of Rivers in this implementation
         var riverName = listener.Name; // River/Queue name can be Service name since one River per Service
-        river.Register(listener);
+        register(river);
         ConfigureQueueAsRiver(riverName);
         Console.WriteLine($" [*] [service: {listener.Name}] Waiting for messages. To exit press CTRL+C");
         ConsumeMessages(river, riverName);

@@ -50,21 +50,16 @@ public class Status {
     }
 
     public override string ToString() {
-        var result = new StringBuilder("Status of Evaluation of:\n");
+        var result = new StringBuilder("Status of filtering of:\n");
         result.Append($"\tOriginal packet: {_originalPacketString}\n");
-        result.Append("\tErrors: ");
-        AppendTo(result, _errorMessages);
-        result.Append("\tInformational messages: ");
-        AppendTo(result, _informationalMessages);
+        AppendTo(result, "Errors", _errorMessages);
+        AppendTo(result, "Informational messages", _informationalMessages);
         return result.ToString();
     }
 
-    private void AppendTo(StringBuilder builder, List<string> messages) {
-        if (messages.Count == 0) {
-            builder.Append("None\n");
-            return;
-        }
-        builder.Append('\n');
+    private void AppendTo(StringBuilder builder, string category, List<string> messages) {
+        if (messages.Count == 0) return;
+        builder.Append($"\t{category} - {messages.Count}:");
         messages.ForEach((message) => {
             builder.Append("\t\t");
             builder.Append(message);
