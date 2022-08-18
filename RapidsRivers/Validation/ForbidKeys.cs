@@ -27,7 +27,7 @@ public class ForbidKeys : RuleGenerator {
         }
 
         public void Evaluate(Packet packet, Status status) {
-            if (packet.IsMissing(_key)) status.MissingExpected(_key);
+            if (packet.IsLacking(_key)) status.MissingExpected(_key);
             else status.UnexpectedlyFound(_key);
         }
 

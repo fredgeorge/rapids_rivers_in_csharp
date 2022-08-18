@@ -27,7 +27,7 @@ public class RequireKeys : RuleGenerator {
         }
 
         public void Evaluate(Packet packet, Status status) {
-            if (packet.IsMissing(_key)) status.UnexpectedlyMissing(_key);
+            if (packet.IsLacking(_key)) status.UnexpectedlyMissing(_key);
             else status.FoundExpected(_key);
         }
 

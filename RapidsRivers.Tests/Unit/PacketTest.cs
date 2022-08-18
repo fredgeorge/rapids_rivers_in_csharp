@@ -44,10 +44,10 @@ public class PacketTest {
 
     [Fact]
     public void IsMissing() {
-        Assert.True(_packet.IsMissing("foo"));
-        Assert.True(_packet.IsMissing("empty"));
-        Assert.True(_packet.IsMissing("null_key"));
-        Assert.True(_packet.IsMissing("empty_list_key"));
+        Assert.True(_packet.IsLacking("foo"));
+        Assert.True(_packet.IsLacking("empty"));
+        Assert.True(_packet.IsLacking("null_key"));
+        Assert.True(_packet.IsLacking("empty_list_key"));
     }
 
     [Fact]

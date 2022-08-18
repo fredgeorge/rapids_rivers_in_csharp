@@ -41,6 +41,7 @@ internal class TestService : River.PacketListener {
 
 internal class TestSystemService : TestService, River.SystemListener {
     internal readonly List<Status> FormatProblems = new();
+    internal readonly List<Packet> LoopPackets = new();
     
     internal TestSystemService(Rules rules) : base(rules) { }
     
@@ -48,8 +49,8 @@ internal class TestSystemService : TestService, River.SystemListener {
         FormatProblems.Add(problems);
     }
 
-    public void LoopDetected(RapidsConnection connection, Packet packet, Status problems) {
-        throw new System.NotImplementedException();
+    public void LoopDetected(RapidsConnection connection, Packet packet) {
+        LoopPackets.Add(packet);
     }
 }
 

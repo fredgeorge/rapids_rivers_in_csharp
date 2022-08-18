@@ -12,19 +12,24 @@ using RapidsRivers.Rivers;
 namespace RapidsRivers.Tests.Util; 
 
 internal class TestConnection : RapidsConnection {
+    private readonly int _maxReadCount;
     private readonly List<River> _rivers = new();
     private readonly Queue<string> _messages = new();
     internal readonly List<RapidsPacket> AllPackets = new();
     internal readonly List<string> AllMessages = new();
+
+    internal TestConnection(int maxReadCount = 9) {
+        _maxReadCount = maxReadCount;
+    }
     
     public void Register(River.PacketListener listener) {
-        var river = new River(this, listener.Rules, 0);
+        var river = new River(this, listener.Rules, _maxReadCount);
         river.Register(listener);
         _rivers.Add(river);
     }
 
     public void Register(River.SystemListener listener)  {
-        var river = new River(this, listener.Rules, 0);
+        var river = new River(this, listener.Rules, _maxReadCount);
         river.Register(listener);
         _rivers.Add(river);
     }

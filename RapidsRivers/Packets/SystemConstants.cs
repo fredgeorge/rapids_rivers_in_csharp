@@ -10,6 +10,8 @@ internal static class SystemConstants {
     internal const string CommunityKey = "community";
     internal const string SystemCommunityValue = "system";
     
+    internal const string SystemReadCountKey = "system_read_count";
+    
     internal const string PacketTypeKey = "packet_type";
     internal const string SystemPacketTypeValue = "system_packet";
     

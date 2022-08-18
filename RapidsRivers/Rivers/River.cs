@@ -38,29 +38,36 @@ public class River : RapidsConnection.MessageListener {
     public void Message(RapidsConnection connection, string message) {
         try {
             Packet packet = new(message);
-            if (packet.IsHeartBeat()) triggerHeartBeatResponse(connection, packet);
+            if (packet.HasInvalidReadCount(_maxReadCount)) {
+                TriggerLoopDetection(connection, packet);
+                return;
+            }
+            if (packet.IsHeartBeat()) TriggerHeartBeatResponse(connection, packet);
             var listeners = packet.IsSystem() ? _systemListeners.ToList<PacketListener>() : _listeners;
             var status = packet.Evaluate(_rules);
-            if (status.HasErrors()) triggerRejectedPacket(listeners, connection, packet, status);
-            else triggerAcceptedPacket(listeners, connection, packet, status);
+            if (status.HasErrors()) TriggerRejectedPacket(listeners, connection, packet, status);
+            else TriggerAcceptedPacket(listeners, connection, packet, status);
         }
         catch (PacketException e) {
             var status = new Status(message);
             status.Error(e.Message);
-            triggerInvalidFormat(connection, message, status);
+            TriggerInvalidFormat(connection, message, status);
         }
     }
 
-    private void triggerAcceptedPacket(List<PacketListener> listeners, RapidsConnection connection, Packet packet, Status problems) =>
+    private void TriggerAcceptedPacket(List<PacketListener> listeners, RapidsConnection connection, Packet packet, Status problems) =>
         listeners.ForEach((service) => service.Packet(connection, packet, problems));
 
-    private void triggerRejectedPacket(List<PacketListener> listeners, RapidsConnection connection, Packet packet, Status problems) =>
+    private void TriggerRejectedPacket(List<PacketListener> listeners, RapidsConnection connection, Packet packet, Status problems) =>
         listeners.ForEach((service) => service.RejectedPacket(connection, packet, problems));
 
-    private void triggerInvalidFormat(RapidsConnection connection, string message, Status problems) =>
+    private void TriggerInvalidFormat(RapidsConnection connection, string message, Status problems) =>
         _systemListeners.ForEach((service) => service.InvalidFormat(connection, message, problems));
 
-    private void triggerHeartBeatResponse(RapidsConnection connection, Packet packet) =>
+    private void TriggerLoopDetection(RapidsConnection connection, Packet packet) =>
+        _systemListeners.ForEach((service) => service.LoopDetected(connection, packet));
+
+    private void TriggerHeartBeatResponse(RapidsConnection connection, Packet packet) =>
         _listeners.ForEach((service) => {
             if (service.IsStillAlive(connection)) connection.Publish(packet.ToHeartBeatResponse(service));
         });
@@ -79,6 +86,6 @@ public class River : RapidsConnection.MessageListener {
     public interface SystemListener : PacketListener {
         void InvalidFormat(RapidsConnection connection, string invalidString, Status problems) { }
 
-        void LoopDetected(RapidsConnection connection, Packet packet, Status problems) { }
+        void LoopDetected(RapidsConnection connection, Packet packet) { }
     }
 }

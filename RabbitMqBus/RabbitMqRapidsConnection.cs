@@ -19,6 +19,7 @@ namespace RabbitMqBus;
 // So the Exchange serves as the Rapids, and there is one Queue per River
 // Note: In this implementation, each Service will have its own River (Rivers not shared)
 public class RabbitMqRapidsConnection : RapidsConnection {
+    private const int DefaultMaximumReadCount = 9;
     private const string ExchangeName = "rapids";
     private const string RabbitMqPubSub = "fanout";
     private readonly IModel _channel;
@@ -38,7 +39,7 @@ public class RabbitMqRapidsConnection : RapidsConnection {
     public void Register(SystemListener listener) => Register(listener, river => river.Register(listener));
 
     private void Register(PacketListener listener, Action<River> register ) {
-        var river = new River(this, listener.Rules, 0); // No sharing of Rivers in this implementation
+        var river = new River(this, listener.Rules, DefaultMaximumReadCount); // No sharing of Rivers in this implementation
         var riverName = listener.Name; // River/Queue name can be Service name since one River per Service
         register(river);
         ConfigureQueueAsRiver(riverName);

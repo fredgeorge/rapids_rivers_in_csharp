@@ -33,6 +33,10 @@ public class Packet : RapidsPacket {
     public Packet Set(string key, string value) {
         ArgumentNullException.ThrowIfNull(value);
         if (string.IsNullOrEmpty(value)) throw new PacketException("String can not be empty", nameof(value));
+        return Set(key, (object)value);
+    }
+    
+    public Packet Set(string key, object value) {
         if (key == "") throw new PacketException("Key can not be empty", nameof(key));
         _map[key] = JsonSerializer.SerializeToElement(value);
         return this;
@@ -47,7 +51,7 @@ public class Packet : RapidsPacket {
             _ => true
         });
 
-    public bool IsMissing(string key) => !Has(key);
+    public bool IsLacking(string key) => !Has(key);
 
     public string String(string key) => Element(key, JsonValueKind.String).GetString()!;
 
@@ -89,7 +93,7 @@ public class Packet : RapidsPacket {
     public override string ToString() => ToJsonString();
 
     private JsonElement Element(string key, JsonValueKind kind) {
-        if (IsMissing(key)) throw new PacketException($"Key <{key}> does not exist", nameof(key));
+        if (IsLacking(key)) throw new PacketException($"Key <{key}> does not exist", nameof(key));
         if (_map[key].ValueKind != kind)
             throw new PacketException($"Value of <{key}> is of type {_map[key].ValueKind} rather than expected type of {kind}", nameof(key));
         return _map[key];
@@ -104,6 +108,15 @@ public class Packet : RapidsPacket {
 
     internal RapidsPacket ToHeartBeatResponse(River.PacketListener service) => 
         new Packet(ToJsonString()).Set(HeartBeatResponderKey, service.Name);
+
+    internal bool HasInvalidReadCount(int maxReadCount) => maxReadCount != 0 && SystemReadCount() > maxReadCount;
+
+    private int SystemReadCount() {
+        if (IsLacking(SystemReadCountKey)) Set(SystemReadCountKey, 0);
+        var result = Integer(SystemReadCountKey) + 1;
+        Set(SystemReadCountKey, Integer(SystemReadCountKey) + 1);
+        return result;
+    }
 
     private bool IsBool(string key, out bool parsedValue) {
         parsedValue = false;
