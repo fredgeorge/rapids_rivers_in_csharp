@@ -7,8 +7,4 @@
         <RootNamespace>RapidsRivers</RootNamespace>
     </PropertyGroup>
 
-    <ItemGroup>
-      <Folder Include="Rapids\RabbitMQ" />
-    </ItemGroup>
-
 </Project>

@@ -56,7 +56,6 @@ internal class TestSystemService : TestService, River.SystemListener {
 internal class DeadService : TestService {
     internal DeadService(Rules rules) : base(rules) { }
     
-
     public override bool IsStillAlive(RapidsConnection connection) {
         return false;
     }

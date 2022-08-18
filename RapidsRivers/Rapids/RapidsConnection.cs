@@ -5,13 +5,14 @@
  */
 
 using RapidsRivers.Packets;
+using static RapidsRivers.Rivers.River;
 
 namespace RapidsRivers.Rapids; 
 
 // Understands access to an undifferentiated stream of messages
 public interface RapidsConnection {
-    void Register(Rivers.River.PacketListener listener);
-    void Register(Rivers.River.SystemListener listener);
+    void Register(PacketListener listener);
+    void Register(SystemListener listener);
     void Publish(RapidsPacket packet);
     
     public interface MessageListener {

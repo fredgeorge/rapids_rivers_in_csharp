@@ -33,5 +33,5 @@ public class HeartBeatPacket : RapidsPacket {
 
     public string ToJsonString() => JsonString(++index);
     
-    public string ToString() => JsonString(index);
+    public override string ToString() => JsonString(index);
 }

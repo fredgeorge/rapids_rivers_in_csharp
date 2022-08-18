@@ -4,8 +4,6 @@
  * Licensed under the MIT License; see LICENSE file in root.
  */
 
-using System;
-using System.Linq;
 using RapidsRivers.Packets;
 using RapidsRivers.Tests.Util;
 using RapidsRivers.Validation;
