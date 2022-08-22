@@ -28,7 +28,7 @@ public class RabbitMqRapidsConnection : RapidsConnection {
 
     public RabbitMqRapidsConnection(string host, int port) {
         var factory = new ConnectionFactory { HostName = host, Port = port };
-        IConnection connection = factory.CreateConnection();
+        var connection = factory.CreateConnection();
         _channel = connection.CreateModel();
         _channel.ExchangeDeclare(ExchangeName, RabbitMqPubSub, true, true,
             new Dictionary<string, object>()); // Either RabbitMQ finds the exchange, or makes it

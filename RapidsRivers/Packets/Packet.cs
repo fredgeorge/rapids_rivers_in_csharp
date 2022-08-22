@@ -104,7 +104,7 @@ public class Packet : RapidsPacket {
     internal bool IsSystem() => 
         Has(PacketTypeKey, JsonValueKind.String) && String(PacketTypeKey) == SystemPacketTypeValue;
 
-    internal bool IsHeartBeat() => !Evaluate(HeartBeatPacket.rules).HasErrors();
+    internal bool IsHeartBeat() => !Evaluate(HeartBeatPacket.Rules).HasErrors();
 
     internal RapidsPacket ToHeartBeatResponse(River.PacketListener service) => 
         new Packet(ToJsonString()).Set(HeartBeatResponderKey, service.Name);

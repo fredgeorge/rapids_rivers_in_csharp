@@ -14,7 +14,7 @@ public class HeartBeatPacket : RapidsPacket {
     private int index = 0;
 
     // Filter for River handling heart beats
-    internal static Rules rules = new(
+    internal static readonly Rules Rules = new(
         new RequireValue(PacketTypeKey, SystemPacketTypeValue),
         new RequireValue(SystemPurposeKey, HeartBeatPurposeValue),
         new RequireKeys(HeartBeatGeneratorKey, HeartBeatIndexKey),

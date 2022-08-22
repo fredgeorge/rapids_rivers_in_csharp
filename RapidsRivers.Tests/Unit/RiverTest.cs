@@ -93,7 +93,7 @@ public class RiverTest {
         Assert.Empty(systemService.AcceptedPackets); 
         HeartBeatPacket heartBeat = new();
         _connection.Publish(heartBeat); 
-        _testOutputHelper.WriteLine(string.Join("\n", _connection.AllMessages));
+        // _testOutputHelper.WriteLine(string.Join("\n", _connection.AllMessages));
         Assert.Empty(normalService.AcceptedPackets);
         Assert.Equal(3, systemService.AcceptedPackets.Count); // HeartBeat + 2 responses
         _connection.Publish(heartBeat);
