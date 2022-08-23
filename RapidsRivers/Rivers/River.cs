@@ -7,6 +7,7 @@
 using RapidsRivers.Packets;
 using RapidsRivers.Rapids;
 using RapidsRivers.Validation;
+using static RapidsRivers.Packets.SystemConstants;
 
 namespace RapidsRivers.Rivers;
 
@@ -55,10 +56,20 @@ public class River : RapidsConnection.MessageListener {
         }
     }
 
-    private void TriggerAcceptedPacket(List<PacketListener> listeners, RapidsConnection connection, Packet packet, Status problems) =>
-        listeners.ForEach((service) => service.Packet(connection, packet, problems));
+    private void TriggerAcceptedPacket(List<PacketListener> listeners, RapidsConnection connection, Packet packet,
+        Status problems) {
+        var breadCrumbs = packet.BreadCrumbs();
+        listeners.ForEach((service) => {
+            packet.Set(SystemBreadCrumbsKey, new List<string>(breadCrumbs) { service.Name });
+            service.Packet(connection, packet, problems);
+        });
+    }
 
-    private void TriggerRejectedPacket(List<PacketListener> listeners, RapidsConnection connection, Packet packet, Status problems) =>
+    private void TriggerRejectedPacket(
+        List<PacketListener> listeners,
+        RapidsConnection connection,
+        Packet packet,
+        Status problems) =>
         listeners.ForEach((service) => service.RejectedPacket(connection, packet, problems));
 
     private void TriggerInvalidFormat(RapidsConnection connection, string message, Status problems) =>

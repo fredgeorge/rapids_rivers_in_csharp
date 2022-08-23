@@ -12,6 +12,8 @@ internal static class SystemConstants {
     
     internal const string SystemReadCountKey = "system_read_count";
     
+    internal const string SystemBreadCrumbsKey = "breadcrumbs";
+    
     internal const string PacketTypeKey = "packet_type";
     internal const string SystemPacketTypeValue = "system_packet";
     

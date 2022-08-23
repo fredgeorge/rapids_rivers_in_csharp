@@ -4,6 +4,7 @@
  * Licensed under the MIT License; see LICENSE file in root.
  */
 
+using System;
 using RapidsRivers.Packets;
 using RapidsRivers.Tests.Util;
 using RapidsRivers.Validation;
@@ -120,5 +121,21 @@ public class RiverTest {
         _connection.Publish(packet);
         Assert.Equal(2, systemService.AcceptedPackets.Count); // Packet not sent to service
         Assert.Single(systemService.LoopPackets);
+    }
+
+    [Fact]
+    public void BreadCrumbs() {
+        TestConnection connection = new(20);  // Don't want to hit loop limit
+        var serviceA = new LinkedService(Array.Empty<string>(), new string[] { "a", "b", "c" });
+        var serviceB = new LinkedService(new string[]{ "a" }, new string[] { "b", "c" });
+        var serviceC = new LinkedService(new string[]{ "a", "b" }, new string[] { "c" });
+        var serviceD = new LinkedService(new string[]{ "a", "b", "c" }, Array.Empty<string>());
+        connection.Register(serviceA);
+        connection.Register(serviceB);
+        connection.Register(serviceC);
+        connection.Register(serviceD);
+        connection.Publish(Packet.Empty());
+        Assert.Single(serviceD.AcceptedPackets);
+        Assert.Equal(4, serviceD.AcceptedPackets[0].StringList("breadcrumbs").Count);
     }
 }

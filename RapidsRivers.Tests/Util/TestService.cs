@@ -28,7 +28,7 @@ internal class TestService : River.PacketListener {
         return true;
     }
 
-    public void Packet(RapidsConnection connection, Packet packet, Status information) {
+    public virtual void Packet(RapidsConnection connection, Packet packet, Status information) {
         AcceptedPackets.Add(packet);
         Informations.Add(information);
     }
@@ -59,5 +59,22 @@ internal class DeadService : TestService {
     
     public override bool IsStillAlive(RapidsConnection connection) {
         return false;
+    }
+}
+
+internal class LinkedService : TestService {
+    private readonly string[] _forbiddenKeys;
+
+    internal LinkedService(string[] requiredKeys, string[] forbiddenKeys) :
+        base(new Rules(new RequireKeys(requiredKeys), new ForbidKeys(forbiddenKeys))) {
+        _forbiddenKeys = forbiddenKeys;
+    }
+
+    public override void Packet(RapidsConnection connection, Packet packet, Status information) {
+        if (_forbiddenKeys.Length != 0) {
+            packet.Set(_forbiddenKeys[0], true);
+            connection.Publish(packet);
+        }
+        base.Packet(connection, packet, information);
     }
 }

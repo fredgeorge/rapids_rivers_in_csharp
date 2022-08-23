@@ -75,6 +75,8 @@ public class Packet : RapidsPacket {
         throw new PacketException($"Value of <{key}> is of type {_map[key].ValueKind} rather than expected type of Boolean");
     }
 
+    public List<string> StringList(string key) => Element(key, JsonValueKind.Array).Deserialize<string[]>().ToList();
+
     public Packet this[string key] {
         get => new(Element(key, JsonValueKind.Object).GetRawText());
         set => throw new NotImplementedException();
@@ -118,6 +120,9 @@ public class Packet : RapidsPacket {
         return result;
     }
 
+    internal List<string> BreadCrumbs() => 
+        Has(SystemBreadCrumbsKey) ? StringList(SystemBreadCrumbsKey) : new List<string>();
+
     private bool IsBool(string key, out bool parsedValue) {
         parsedValue = false;
         return Has(key, JsonValueKind.String) &&
@@ -135,5 +140,4 @@ public class PacketException : ArgumentException {
         : base(message, paramName) { }
     public PacketException(string? message, string? paramName, Exception? innerException) 
         : base(message, paramName, innerException) { }
-    
 }

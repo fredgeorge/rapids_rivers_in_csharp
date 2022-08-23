@@ -4,6 +4,7 @@
  * Licensed under the MIT License; see LICENSE file in root.
  */
 
+using System.Collections.Generic;
 using RapidsRivers.Packets;
 using RapidsRivers.Tests.Util;
 using Xunit;
@@ -40,6 +41,7 @@ public class PacketTest {
         Assert.True(_packet.Boolean("boolean_key"));
         Assert.False(_packet.Boolean("boolean_string_key"));
         Assert.Equal(3.Mar(), _packet.DateTime("date_time_key"));
+        Assert.Equal(new List<string>() { "foo", "bar" }, _packet.StringList("string_list_key"));
     }
 
     [Fact]
