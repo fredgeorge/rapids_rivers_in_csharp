@@ -34,6 +34,11 @@ internal class TestConnection : RapidsConnection {
         _rivers.Add(river);
     }
 
+    public void Publish(RapidsPacket packet) {
+        AllPackets.Add(packet);
+        Publish(packet.ToJsonString());
+    }
+
     internal void Publish(string message) {
         AllMessages.Add(message);
         if (_messages.Count > 0) _messages.Enqueue(message);
@@ -45,10 +50,5 @@ internal class TestConnection : RapidsConnection {
                 _messages.Dequeue();
             }
         }
-    }
-
-    public void Publish(RapidsPacket packet) {
-        AllPackets.Add(packet);
-        Publish(packet.ToJsonString());
     }
 }

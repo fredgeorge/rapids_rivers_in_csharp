@@ -136,6 +136,6 @@ public class RiverTest {
         connection.Register(serviceD);
         connection.Publish(Packet.Empty());
         Assert.Single(serviceD.AcceptedPackets);
-        Assert.Equal(4, serviceD.AcceptedPackets[0].StringList("breadcrumbs").Count);
+        Assert.Equal(4, serviceD.AcceptedPackets[0].StringList("system_breadcrumbs").Count);
     }
 }
