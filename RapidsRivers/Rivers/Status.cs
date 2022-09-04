@@ -30,7 +30,7 @@ public class Status {
     }
 
     public void FoundValue(string key, object requiredValue) {
-        _informationalMessages.Add($"Require key <{key}> has value <{requiredValue}>");
+        _informationalMessages.Add($"Required key <{key}> has value <{requiredValue}>");
     }
 
     public void UnexpectedlyMissing(string key) {

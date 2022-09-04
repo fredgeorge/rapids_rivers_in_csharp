@@ -37,6 +37,19 @@ public class Monitor : SystemListener {
     public bool IsStillAlive(RapidsConnection connection) => true;
 
     public void Packet(RapidsConnection connection, Packet packet, Status information) {
+/*
+ *      Sample Packet manipulations:
+ * 
+ *      packet.String("key");  // return the String value in the Packet
+ *      packet.Integer("key");  // return the int value in the Packet
+ *      packet.Double("key");  // return the double value in the Packet
+ *      packet.DateTime("key");  // return the DateTime value in the Packet after conversion from string
+ *      packet.StringList("key");  // return a List of Strings in the Packet
+ *      packet["key"];              // return a sub-Packet at the key; use this to get deeper access to packet's JSON
+ *      packet.IsLacking("key");   // return true if the packet does not have the key, the value is null, the value is an empty string, or the value is an empty array
+ *      packet.Set("key", value);  // Set the key/value pair into the Packet; you can override an existing value, or create a new one
+ *       
+*/
         Console.WriteLine(" [x] {0}", information);
     }
 
