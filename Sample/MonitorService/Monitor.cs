@@ -4,6 +4,7 @@
  * Licensed under the MIT License; see LICENSE file in root.
  */
 
+using System.Runtime.CompilerServices;
 using RabbitMqBus;
 using RapidsRivers.Packets;
 using RapidsRivers.Rapids;
@@ -13,8 +14,9 @@ using static RapidsRivers.Rivers.River;
 
 namespace MonitorService;
 
-public class Monitor : SystemListener {
-    public string Name => $"Monitor [{GetHashCode()}]";
+public class Monitor : SystemListener
+{
+    public string Name => $"Monitor [" + GetHashCode() + "}]";
 
     // Sample rule possibilities in comments below:
     public Rules Rules => new(
