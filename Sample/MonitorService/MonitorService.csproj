@@ -20,4 +20,12 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <EditorConfigFiles Remove="C:\Users\dev\src\csharp\rapids_rivers_in_csharp\Sample\MonitorService\.editorconfig" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="C:\Users\dev\src\csharp\rapids_rivers_in_csharp\Sample\MonitorService\.editorconfig" />
+    </ItemGroup>
+
 </Project>

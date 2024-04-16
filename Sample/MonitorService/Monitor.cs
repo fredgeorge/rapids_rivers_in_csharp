@@ -16,7 +16,7 @@ namespace MonitorService;
 
 public class Monitor : SystemListener
 {
-    public string Name => $"Monitor [" + GetHashCode() + "}]";
+    public string Name => $"Monitor [" + Guid.NewGuid().ToString("N") + "}]";
 
     // Sample rule possibilities in comments below:
     public Rules Rules => new(
